@@ -13,21 +13,22 @@ Values are decrypted in the script without emulating or executing malware code
 
 # Example
 
-`decoder.py asyncrat.bin`
+`asyncrat-config-extractor.py asyncrat.bin`
 
 # Samples
 
-- Async: `4b63a22def3589977211ff8749091f61d446df02cfc07066b78d3302c034b0cc`
-- Venom: `2941774e26232818b739deff45e59a32247a4a5c8d1d4e4aca517a6f5ed5055f`
-- Dcrat: `ed7cd05b950c11d49a3a36f6fe35e672e088499a91f7263740ee8b79f74224e9`
+- Asyncrat: `4b63a22def3589977211ff8749091f61d446df02cfc07066b78d3302c034b0cc`
+- Venom:    `2941774e26232818b739deff45e59a32247a4a5c8d1d4e4aca517a6f5ed5055f`
+- Dcrat:    `ed7cd05b950c11d49a3a36f6fe35e672e088499a91f7263740ee8b79f74224e9`
 
 # Output
-![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/37e62deb-6451-4c5c-a736-83e814542064)
+![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/e0c20a33-1f3f-43b1-b4ec-b029f91de6c0)
+
+![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/a505d5e9-16d7-4347-8493-b2ed20bbc935)
 
 
-![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/8bdf700b-40ed-470d-a00c-7c776820c858)
+![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/ac016e16-317b-48c2-97c4-60a66460d849)
 
-![image](https://github.com/embee-research/Asyncrat-Venom-Dcrat-Config-Extractor/assets/82847168/036b56b0-fb71-4d46-ade7-0cd8a0e95444)
 
 # Original Encrypted Values
 
