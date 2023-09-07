@@ -46,7 +46,7 @@ try:
     sha_256 = "".join(x for x in str(hashlib.sha256(data).hexdigest()))
     print("SHA256: " + sha_256)
 except:
-    continue
+    pass
 
 
 #Name of Class containing configuration values
