@@ -15,6 +15,7 @@ https://research.openanalysis.net/dot%20net/static%20analysis/stormkitty/dnlib/p
 
 
 Usage: `asyncrat-config-extractor.py asyncrat.bin`
+(Ensure that you have a copy of dnlib.dll in the same directory as this script)
 
 """
 
@@ -33,8 +34,7 @@ try:
     print("Loading File: " + filename)
     module = ModuleDefMD.Load(filename)
 except Exception as e:
-    #print(e)
-    print("Please enter a filename")
+    print("Unable to open file. Please ensure you have entered a filename as an argument")
     sys.exit(1)
 
 f = open(filename, "rb")
