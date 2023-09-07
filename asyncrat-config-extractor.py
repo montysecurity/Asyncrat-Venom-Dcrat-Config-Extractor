@@ -22,13 +22,14 @@ Usage: `asyncrat-config-extractor.py asyncrat.bin`
 
 import clr,os,base64,binascii,hmac,hashlib,sys
 current_dir = os.getcwd()
-#print(current_dir)
+#Open dlib.dll from current directory
 clr.AddReference(current_dir + "\\dnlib.dll")
 from dnlib.DotNet import ModuleDefMD
 from dnlib.DotNet.Emit import OpCodes
 from Crypto.Cipher import AES
 from backports.pbkdf2 import pbkdf2_hmac
 
+#read the 1st argument containing filename to open
 try:
     filename = current_dir + "\\" + sys.argv[1]
     print("Loading File: " + filename)
@@ -37,21 +38,25 @@ except Exception as e:
     print("Unable to open file. Please ensure you have entered a filename as an argument")
     sys.exit(1)
 
-f = open(filename, "rb")
-data = f.read()
-f.close()
-sha_256 = "".join(x for x in str(hashlib.sha256(data).hexdigest()))
-print("SHA256: " + sha_256)
+#Temporarily read file so that sha256 can be calculated. 
+try: 
+    f = open(filename, "rb")
+    data = f.read()
+    f.close()
+    sha_256 = "".join(x for x in str(hashlib.sha256(data).hexdigest()))
+    print("SHA256: " + sha_256)
+except:
+    continue
 
+
+#Name of Class containing configuration values
 class_name = "Client.Settings"
-
-target_type = module.Find(class_name, isReflectionName=True)
-
+#placeholders for storing data
 values = []
-
 name_mappings = {}
 in_field = False
 
+target_type = module.Find(class_name, isReflectionName=True)
 if target_type:
     #Enumerate methods looking for constructors
     constructors = [m for m in target_type.Methods if m.Name in (".cctor", ".ctor")]
@@ -151,13 +156,13 @@ def aes_decrypt(enc,key,iv):
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return cipher.decrypt(enc)
 
-
+#Generate AES Keys from salt. 
 salt = get_salt_from_bin()
 this_key = derive_aes_key(settings_key,salt,32)
 auth_key = derive_aes_key(settings_key,salt,96)
 auth_key = auth_key[32:]
 
-#Enumerate encrypted config and decrypt as appropriate
+#Enumerate encrypted config and decrypt/print as appropriate
 for name in name_mappings.keys():
     try: 
         enc = name_mappings[name]
