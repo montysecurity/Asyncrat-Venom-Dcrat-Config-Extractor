@@ -4,12 +4,15 @@ Config Extractor For Asyncrat and variants (dcrat/Venomrat)
 Author: Matthew
 Twitter: @Embee_Research
 
-Some of this code was heavily influenced by the StormKitty OALabs Writeup
-
 Samples:
 Async: 4b63a22def3589977211ff8749091f61d446df02cfc07066b78d3302c034b0cc
 Venom: 2941774e26232818b739deff45e59a32247a4a5c8d1d4e4aca517a6f5ed5055f
 Dcrat: ed7cd05b950c11d49a3a36f6fe35e672e088499a91f7263740ee8b79f74224e9
+
+The portion of this code that obtains the byte-based aes256.salt was heavily inspired 
+by the OALabs StormKitty post. 
+https://research.openanalysis.net/dot%20net/static%20analysis/stormkitty/dnlib/python/research/2021/07/14/dot_net_static_analysis.html
+
 
 Usage: `asyncrat-config-extractor.py asyncrat.bin`
 
