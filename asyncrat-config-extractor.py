@@ -19,7 +19,6 @@ Usage: `asyncrat-config-extractor.py asyncrat.bin`
 
 """
 
-
 import clr,os,base64,binascii,hmac,hashlib,sys
 current_dir = os.getcwd()
 #Open dlib.dll from current directory
@@ -48,32 +47,44 @@ try:
 except:
     pass
 
-
-#Name of Class containing configuration values
+# Name of Class containing configuration values
 class_name = "Client.Settings"
-#placeholders for storing data
+# placeholders for storing data
 values = []
 name_mappings = {}
 in_field = False
 
 target_type = module.Find(class_name, isReflectionName=True)
 if target_type:
-    #Enumerate methods looking for constructors
+    # Enumerate methods looking for constructors
     constructors = [m for m in target_type.Methods if m.Name in (".cctor", ".ctor")]
     for constructor in constructors:
         if constructor.HasBody:
-            #Enumerate constructor instructions (IL)
-            for instruction in constructor.Body.Instructions:
-                #get encrypted string
-                if "ldstr" in str(instruction):
-                    field_value = str(instruction).split(" ")[-1]
-                    field_value = field_value.strip("\"")
-                    in_field = True
-                #Get field name from IL instructions
-                if "stsfld" in str(instruction) and in_field:
-                    fieldname = str(instruction).split()[-1]
-                    name_mappings[fieldname] = field_value
-                    in_field = False
+            # Enumerate constructor instructions (IL)
+            instructions = list(constructor.Body.Instructions)
+            ################## ORIGINAL CODE FROM embee-research #############################
+            #for instruction in constructor.Body.Instructions:
+            #    print(instruction)
+            #    #get encrypted string
+            #    if "ldstr" in str(instruction):
+            #        field_value = str(instruction).split(" ")[-1]
+            #        field_value = field_value.strip("\"")
+            #        in_field = True
+            #    #Get field name from IL instructions
+            #    if "stsfld" in str(instruction) and in_field:
+            #        fieldname = str(instruction).split()[-1]
+            #        name_mappings[fieldname] = field_value
+            #        in_field = False
+            ################################################################################
+            i = 0
+            for instruction in list(reversed(instructions)):
+                if "stsfld" in str(instruction):
+                    if "ldstr" in str(list(reversed(instructions))[i+1]):
+                        field_name = str(f"{str(instruction).split(': stsfld')[1]}".strip("\n"))
+                        field_value = str(list(reversed(instructions))[i+1]).split('"')[1].strip('"')
+                        name_mappings[field_name] = field_value
+                i += 1
+
 #Get AES encryption key from settings
 for i in name_mappings.keys():
     if "key" in i.lower():
@@ -132,23 +143,22 @@ def get_salt_from_bin():
                         return out
                     except:
                         continue
-
-
     return None
 
 #Function for deriving AES Key from salt
 def derive_aes_key(key,salt,keysize):
     key = bytearray(base64.b64decode(key))
-
     salt = bytes(salt)
     key = pbkdf2_hmac("SHA1", key, salt, 50000, keysize)
     return key
+
 #Function for deriving IV from initial authkey
 def generate_iv(authkey, enc):
     data = base64.b64decode(enc)
     data = data[32:]
     out = hmac.new(authkey, data,hashlib.sha256).hexdigest()
     return out[0:32]
+
 #Function for performing primary encryption
 def aes_decrypt(enc,key,iv):
     iv = bytes.fromhex(iv)
@@ -163,7 +173,7 @@ auth_key = derive_aes_key(settings_key,salt,96)
 auth_key = auth_key[32:]
 
 #Enumerate encrypted config and decrypt/print as appropriate
-for name in name_mappings.keys():
+for name in reversed(name_mappings.keys()):
     try: 
         enc = name_mappings[name]
         iv = generate_iv(auth_key,enc)
@@ -175,8 +185,5 @@ for name in name_mappings.keys():
         out2 = "".join(letter for letter in out if letter.isprintable())
         if len(out) < 100:
             print(name.split("::")[1] + ": " + out2)
-        
     except:
         continue
-
-

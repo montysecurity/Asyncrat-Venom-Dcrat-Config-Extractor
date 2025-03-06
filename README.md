@@ -1,3 +1,8 @@
+# Changes from Fork
+
+- Modified code for extracting fields from `Client.Settings` (mainly as a learning experiment)
+- Added `requirements.txt`
+
 # Asyncrat-Venom-Dcrat-Config-Extractor
 Static Config Extractor for Asyncrat/Dcrat/VenomRat
 
